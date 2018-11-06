@@ -9,7 +9,6 @@ enum CREEP_STATE {
 export class HarvesterCreep extends BaseCreep {
 
     public static pauseRange: number = 3;
-    public static body: string[] = [WORK, CARRY, MOVE, MOVE];
 
     private _mine: Mineral;
     private _depot: Structure;
@@ -72,5 +71,9 @@ export class HarvesterCreep extends BaseCreep {
 
     public stop(): void {
         this._state = CREEP_STATE.STOP;
+    }
+
+    public static body(): string[] {
+
     }
 }
