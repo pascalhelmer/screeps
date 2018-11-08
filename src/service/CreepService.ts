@@ -27,7 +27,7 @@ export abstract class CreepService extends BaseService {
     }
 
     protected birth(body: string[], memory: Memory): void {
-        const action = new Action(ACTIONPRIO.HIGHEST, ACTIONTYPE.CREEPNEW, new CreepNewPayload([], this._getMemoryKey(), memory));
+        const action = new Action(ACTIONPRIO.HIGHEST, ACTIONTYPE.CREEPNEW, new CreepNewPayload(body, this._getMemoryKey(), memory));
         QueueStorage.instance().enqueue(this._roomName, QUEUETYPE.CREEP, action);
     }
 

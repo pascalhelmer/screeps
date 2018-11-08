@@ -31,7 +31,7 @@ export class SpawnService extends BaseService {
                     if (this.couldSpawn(payload.body)) {
                         QueueStorage.instance().dequeue(this._roomName, QUEUETYPE.CREEP);
                         // TODO: Add name generator
-                        freeSpawn.spawnCreep(payload.body as BodyPartConstant[], '', { memory: payload.memory as CreepMemory })
+                        freeSpawn.spawnCreep(payload.body as BodyPartConstant[], `${Game.time}`, { memory: payload.memory as CreepMemory })
                     }
                 }
                 break;

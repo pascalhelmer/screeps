@@ -5,7 +5,14 @@ export class HarvesterCreepService extends CreepService {
 
     constructor(roomName: string) {
         super(roomName);
+    }
 
+    public update(): void {
+        if (this._creeps.length === 0) {
+            this.birth();
+        }
+
+        super.update();
     }
 
     protected birth(): void {

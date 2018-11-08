@@ -57,6 +57,7 @@ export class BaseRoom {
     private saveServices(): void {
         const serviceNames: SERVICE_TYPE[] = [];
         this._services.forEach(service => {
+            // TODO: Use FactoryPattern to create services
             switch (typeof service) {
                 case (typeof HarvesterCreepService):
                     serviceNames.push(SERVICE_TYPE.HARVESTERCREEP);
