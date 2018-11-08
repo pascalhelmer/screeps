@@ -10,6 +10,6 @@ export class HarvesterCreepService extends CreepService {
 
     protected birth(): void {
         // TODO: Calculate body
-        super.birth([WORK, CARRY, MOVE], {});
+        super.birth([WORK, CARRY, MOVE], {} as Memory);
     }
 }

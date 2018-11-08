@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { CreepNewPayload } from "../utils/payload/CreepNewPayload";
 import { ACTIONTYPE } from "../utils/storage/queue/ActionType.enum";
 import { QueueStorage } from "../utils/storage/queue/QueueStorage";
@@ -41,10 +40,39 @@ export class SpawnService extends BaseService {
 
     private couldSpawn(body: string[]): boolean {
         let cost = 0;
-        body.forEach(bodypart => cost += BODYPART_COST[bodypart]);
+        body.forEach(bodyPart => {
+            switch (bodyPart) {
+                case WORK:
+                    cost += BODYPART_COST.work;
+                    break;
+                case CARRY:
+                    cost += BODYPART_COST.carry;
+                    break;
+                case MOVE:
+                    cost += BODYPART_COST.move;
+                    break;
+                case ATTACK:
+                    cost += BODYPART_COST.attack;
+                    break;
+                case RANGED_ATTACK:
+                    cost += BODYPART_COST.ranged_attack;
+                    break;
+                case TOUGH:
+                    cost += BODYPART_COST.tough;
+                    break;
+                case HEAL:
+                    cost += BODYPART_COST.heal;
+                    break;
+                case CLAIM:
+                    cost += BODYPART_COST.claim;
+                    break;
+            }
+        });
 
-        if (this._room.energyAvailable >= cost) {
-            return true;
+        if (this._room) {
+            if (this._room.energyAvailable >= cost) {
+                return true;
+            }
         }
         return false;
     }

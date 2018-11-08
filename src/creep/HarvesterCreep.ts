@@ -13,10 +13,16 @@ export class HarvesterCreep extends BaseCreep {
         this._depot = depot || this._creep.memory._depot;
     }
 
-    protected load(): void {
+    public load(): void {
         super.load();
         this._mine = Object.assign(new Mineral(''), this._creep.memory._mine);
         this._depot = Object.assign(new Structure(''), this._creep.memory._depot);
+    }
+
+    public save(): void {
+        super.save();
+        this._creep.memory._mine = this._mine;
+        this._creep.memory._depot = this._depot;
     }
 
     public setMiningRoute(mine: Mineral, depot: Structure): void {
@@ -26,16 +32,16 @@ export class HarvesterCreep extends BaseCreep {
 
     protected onWork(): void {
         if (this._creep.carry.energy >= this._creep.carryCapacity) {
-            if (!this._creep.pos.isNearTo(this._depot.pos)) {
-                this._creep.moveTo(this._depot.pos);
+            if (!this._creep.pos.isNearTo(this._depot!.pos)) {
+                this._creep.moveTo(this._depot!.pos);
             } else {
-                this._creep.transfer(this._depot, this._mine.mineralType);
+                this._creep.transfer(this._depot!, this._mine!.mineralType);
             }
         } else {
-            if (!this._creep.pos.isNearTo(this._mine.pos)) {
-                this._creep.moveTo(this._mine.pos);
+            if (!this._creep.pos.isNearTo(this._mine!.pos)) {
+                this._creep.moveTo(this._mine!.pos);
             } else {
-                this._creep.harvest(this._mine);
+                this._creep.harvest(this._mine!);
             }
         }
     }

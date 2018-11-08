@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { BaseCreep } from '../creep/BaseCreep';
 import { CreepNewPayload } from "../utils/payload/CreepNewPayload";
 import { Action } from "../utils/storage/queue/Action";
@@ -27,7 +26,7 @@ export abstract class CreepService extends BaseService {
         this._creeps.forEach(creep => creep.update());
     }
 
-    protected birth(body: string[], memory: {}): void {
+    protected birth(body: string[], memory: Memory): void {
         const action = new Action(ACTIONPRIO.HIGHEST, ACTIONTYPE.CREEPNEW, new CreepNewPayload([], this._getMemoryKey(), memory));
         QueueStorage.instance().enqueue(this._roomName, QUEUETYPE.CREEP, action);
     }

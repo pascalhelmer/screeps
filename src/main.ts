@@ -1,3 +1,4 @@
+import { BaseRoom } from "./BaseRoom";
 import { ErrorMapper } from './utils/ErrorMapper';
 
 
@@ -11,5 +12,10 @@ export const loop = ErrorMapper.wrapLoop(() => {
         }
     }
 
-
+    for (const room in Game.rooms) {
+        const baseRoom: BaseRoom = new BaseRoom(Game.rooms[room]);
+        baseRoom.load();
+        baseRoom.update();
+        baseRoom.save();
+    }
 });

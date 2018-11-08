@@ -23,22 +23,24 @@ export class QueueStorage {
 
 
     private constructor() {
-        this.load();
+        this._storage = this.load();
     }
 
-    private load(): void {
+    private load(): Dictionary<string, Dictionary<number, PriorityQueue<Action>>> {
         // this._storage = Memory[QueueStorage._memoryKey];
 
         const storageDic: Dictionary<string, Dictionary<number, PriorityQueue<Action>>> = new Dictionary();
-        for (const room in Game.rooms) {
+        for (const roomName in Game.rooms) {
             const queueDic: Dictionary<number, PriorityQueue<Action>> = new Dictionary();
-            for (const queue in QUEUETYPE) {
-                queueDic.setValue(queue, Object.assign(new PriorityQueue(), Memory[QueueStorage._memoryKey][room.name][queue]));
+            for (const queue in Object.values(QUEUETYPE)) {
+                if (!isNaN) {
+                    queueDic.setValue(Number(queue), Object.assign(new PriorityQueue(), Memory[QueueStorage._memoryKey][roomName][queue]));
+                }
             }
-            storageDic.setValue(room.name, Object.assign(new Dictionary<number, PriorityQueue<Action>>(), queueDic));
+            storageDic.setValue(roomName, Object.assign(new Dictionary<number, PriorityQueue<Action>>(), queueDic));
         }
 
-        this._storage = storageDic;
+        return storageDic;
     }
 
     public save(): void {
@@ -50,11 +52,11 @@ export class QueueStorage {
             this._storage.setValue(roomid, new Dictionary<number, PriorityQueue<Action>>());
         }
 
-        if (!this._storage.getValue(roomid).containsKey(queueid)) {
-            this._storage.getValue(roomid).setValue(queueid, new PriorityQueue<Action>());
+        if (!this._storage.getValue(roomid)!.containsKey(queueid)) {
+            this._storage.getValue(roomid)!.setValue(queueid, new PriorityQueue<Action>());
         }
 
-        return this._storage.getValue(roomid).getValue(queueid).enqueue(value);
+        return this._storage.getValue(roomid)!.getValue(queueid)!.enqueue(value);
     }
 
     public peek(roomid: string, queueid: QUEUETYPE): Action | undefined {
@@ -63,11 +65,11 @@ export class QueueStorage {
 
     public dequeue(roomid: string, queueid: QUEUETYPE, peek?: boolean): Action | undefined {
         if (this._storage.containsKey(roomid)) {
-            if (this._storage.getValue(roomid).containsKey(queueid)) {
+            if (this._storage.getValue(roomid)!.containsKey(queueid)) {
                 if (peek) {
-                    return this._storage.getValue(roomid).getValue(queueid).peek();
+                    return this._storage.getValue(roomid)!.getValue(queueid)!.peek();
                 } else {
-                    return this._storage.getValue(roomid).getValue(queueid).dequeue();
+                    return this._storage.getValue(roomid)!.getValue(queueid)!.dequeue();
                 }
             }
         }

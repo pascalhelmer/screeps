@@ -8,16 +8,22 @@ enum SERVICE_TYPE {
     HARVESTERCREEP
 }
 
-export class BaseRoom extends Room {
+export class BaseRoom {
 
     private _room: Room;
     private _services: BaseService[];
 
     constructor(room: Room) {
-        super(room.name);
-
         this._room = room;
+        this._services = [];
+    }
+
+    public load(): void {
         this._services = this.loadServices();
+    }
+
+    public save(): void {
+        this.saveServices();
     }
 
     public update(): void {
@@ -41,6 +47,21 @@ export class BaseRoom extends Room {
         });
 
         return services;
+    }
+
+    private saveServices(): void {
+        const serviceNames: SERVICE_TYPE[] = [];
+        this._services.forEach(service => {
+            switch (typeof service) {
+                case (typeof HarvesterCreepService):
+                    serviceNames.push(SERVICE_TYPE.HARVESTERCREEP);
+                    break;
+                case (typeof SpawnService):
+                    serviceNames.push(SERVICE_TYPE.SPAWN);
+                    break;
+            }
+        });
+        this._room.memory._services = serviceNames;
     }
 
     private initService(serviceName: SERVICE_TYPE): BaseService | undefined {
