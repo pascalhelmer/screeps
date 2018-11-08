@@ -1,4 +1,4 @@
-export class BaseSpawn extends Spawn {
+export class BaseSpawn {
 
 
 
