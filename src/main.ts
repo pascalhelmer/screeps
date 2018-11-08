@@ -1,4 +1,5 @@
-import { BaseRoom } from "./BaseRoom";
+import { BaseRoom } from './BaseRoom';
+import { SERVICE_TYPE } from "./ServiceType.enum";
 import { ErrorMapper } from './utils/ErrorMapper';
 
 
@@ -12,9 +13,12 @@ export const loop = ErrorMapper.wrapLoop(() => {
         }
     }
 
+    // Handle rooms
     for (const room in Game.rooms) {
         const baseRoom: BaseRoom = new BaseRoom(Game.rooms[room]);
         baseRoom.load();
+        baseRoom.addService(SERVICE_TYPE.HARVESTERCREEP);
+        baseRoom.addService(SERVICE_TYPE.SPAWN);
         baseRoom.update();
         baseRoom.save();
     }

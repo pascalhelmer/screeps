@@ -1,12 +1,8 @@
 import { BaseService } from './service/BaseService';
 import { HarvesterCreepService } from "./service/HarvesterCreepService";
 import { SpawnService } from "./service/SpawnService";
+import { SERVICE_TYPE } from "./ServiceType.enum";
 
-
-enum SERVICE_TYPE {
-    SPAWN,
-    HARVESTERCREEP
-}
 
 export class BaseRoom {
 
@@ -32,13 +28,22 @@ export class BaseRoom {
         this._services.forEach(service => service.update());
     }
 
+    public addService(serviceName: SERVICE_TYPE): void {
+        if (!this._room.memory._services || !this._room.memory._services.includes(serviceName)) {
+            const service = this.initService(serviceName);
+            if (service) {
+                this._services.push(service);
+            }
+        }
+    }
+
     private analyse(): void {
 
     }
 
     private loadServices(): BaseService[] {
         const services: BaseService[] = [];
-        const serviceNames = this._room.memory._services as SERVICE_TYPE[];
+        const serviceNames = this._room.memory._services as SERVICE_TYPE[] || [];
         serviceNames.forEach(serviceName => {
             const service = this.initService(serviceName);
             if (service) {
