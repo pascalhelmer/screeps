@@ -1,7 +1,10 @@
 import { BaseRoom } from './BaseRoom';
+import * as Profiler from './Profiler';
 import { SERVICE_TYPE } from "./ServiceType.enum";
 import { ErrorMapper } from './utils/ErrorMapper';
 
+
+global.Profiler = Profiler.init();
 
 export const loop = ErrorMapper.wrapLoop(() => {
     console.log(`Current game tick is ${Game.time}`);
