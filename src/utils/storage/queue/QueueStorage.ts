@@ -1,10 +1,9 @@
 import Dictionary from "typescript-collections/dist/lib/Dictionary";
 import PriorityQueue from "typescript-collections/dist/lib/PriorityQueue";
-import { profile } from "../../../Profiler/Profiler";
 import { Action } from "./Action";
 import { QUEUETYPE } from "./QueueType.enum";
 
-@profile
+
 export class QueueStorage {
 
     private static _memoryKey: string = 'QueueStorage';

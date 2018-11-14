@@ -6,6 +6,7 @@ interface ProfilerMemory {
   data: { [name: string]: ProfilerData };
   start?: number;
   total: number;
+  lastStart?: number;
 }
 
 interface ProfilerData {
