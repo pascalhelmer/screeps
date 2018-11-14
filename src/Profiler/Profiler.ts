@@ -54,6 +54,7 @@ export function init(): Profiler {
 
 function wrapFunction(obj: object, key: PropertyKey, className?: string) {
     const descriptor = Reflect.getOwnPropertyDescriptor(obj, key);
+    // const descriptor = Object.getOwnPropertyDescriptor(obj, key);
     if (!descriptor || descriptor.get || descriptor.set) { return; }
 
     if (key === "constructor") { return; }
@@ -68,12 +69,15 @@ function wrapFunction(obj: object, key: PropertyKey, className?: string) {
     // set a tag so we don't wrap a function twice
     const savedName = `__${key.toString()}__`;
     if (Reflect.has(obj, savedName)) { return; }
+    // if (_.has(obj, savedName)) { return; }
 
     Reflect.set(obj, savedName, originalFunction);
+    // Object.defineProperty(obj, savedName, originalFunction);
 
     ///////////
 
     Reflect.set(obj, key, function(this: any, ...args: any[]) {
+    // Object.defineProperty(obj, key, function(this: any, ...args: any[]) {
         if (isEnabled()) {
             const start = Game.cpu.getUsed();
             const result = originalFunction.apply(this, args);
@@ -109,6 +113,11 @@ export function profile(
     Reflect.ownKeys(ctor.prototype).forEach((k) => {
         wrapFunction(ctor.prototype, k, className);
     });
+    /*
+    Object.getOwnPropertyNames(ctor.prototype).forEach(k => {
+        wrapFunction(ctor.prototype, k, className);
+    });
+    */
 }
 
 function isEnabled(): boolean {
@@ -165,7 +174,8 @@ function outputProfilerData() {
     let calls: number;
     let time: number;
     let result: Partial<OutputData>;
-    const data = Reflect.ownKeys(Memory.profiler.data).map((key) => {
+    // const data = Reflect.ownKeys(Memory.profiler.data).map((key) => {
+    const data = Object.getOwnPropertyNames(Memory.profiler.data).map(key => {
         calls = Memory.profiler.data[key.toString()].calls;
         time = Memory.profiler.data[key.toString()].time;
         result = {};
