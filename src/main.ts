@@ -1,8 +1,8 @@
 import { BaseRoom } from './BaseRoom';
-import * as Profiler from './Profiler';
-import { profileRecord } from "./Profiler/Profiler";
-import { SERVICE_TYPE } from "./ServiceType.enum";
+import { SERVICE_TYPE } from './ServiceType.enum';
 import { ErrorMapper } from './utils/ErrorMapper';
+import * as Profiler from './utils/Profiler';
+import { profileRecord } from './utils/Profiler/Profiler';
 
 
 global.Profiler = Profiler.init();
