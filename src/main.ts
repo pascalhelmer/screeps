@@ -1,10 +1,10 @@
 import { BaseRoom } from './BaseRoom';
 import { SERVICE_TYPE } from "./ServiceType.enum";
 import { ErrorMapper } from './utils/ErrorMapper';
+import { log } from './utils/logger/Log';
 
-
-export const loop = ErrorMapper.wrapLoop(() => {
-    console.log(`Current game tick is ${Game.time}`);
+function mainLoop() {
+    log.info(`Current game tick is ${Game.time}`);
 
     // Automatically delete memory of missing creeps
     for (const name in Memory.creeps) {
@@ -22,4 +22,8 @@ export const loop = ErrorMapper.wrapLoop(() => {
         baseRoom.update();
         baseRoom.save();
     }
+}
+
+export const loop = ErrorMapper.wrapLoop(() => {
+    mainLoop();
 });

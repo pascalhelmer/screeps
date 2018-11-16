@@ -17,6 +17,9 @@
 # Screeps Config
 screeps.json
 
+# Screeps Server
+.env
+
 # Numerous always-ignore extensions
 *.diff
 *.err
