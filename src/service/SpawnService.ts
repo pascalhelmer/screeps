@@ -1,3 +1,4 @@
+import { log } from "../utils/logger/Log";
 import { CreepNewPayload } from "../utils/payload/CreepNewPayload";
 import { ACTIONTYPE } from "../utils/storage/queue/ActionType.enum";
 import { QueueStorage } from "../utils/storage/queue/QueueStorage";
@@ -13,11 +14,14 @@ export class SpawnService extends BaseService {
     constructor(roomName: string) {
         super(roomName);
 
+        log.debug(`Init SpawnService for room ${roomName}...`);
         this._room = this.loadRoom();
         this._spawns = this.loadSpawns();
+        log.debug(`Room: ${this._roomName} | Spawns: ${this._spawns.length}`);
     }
 
     public update(): void {
+        log.debug(`Room: ${this._roomName} | Updating SpawnService...`);
         const action = QueueStorage.instance().peek(this._roomName, QUEUETYPE.CREEP);
         if (!action) {
             return;
@@ -25,10 +29,12 @@ export class SpawnService extends BaseService {
 
         switch (action.type) {
             case ACTIONTYPE.CREEPNEW:
+                log.debug(`Room: ${this._roomName} | New creeep spawn action found.`);
                 const freeSpawn = this.getNotWorkingSpawn();
                 if (freeSpawn) {
                     const payload = (action.payload as CreepNewPayload);
                     if (this.couldSpawn(payload.body)) {
+                        log.debug(`Room: ${this._roomName} | Spawn new creep in free spawn: ${freeSpawn.name}`);
                         QueueStorage.instance().dequeue(this._roomName, QUEUETYPE.CREEP);
                         // TODO: Add name generator
                         freeSpawn.spawnCreep(payload.body as BodyPartConstant[], `${Game.time}`, { memory: payload.memory as CreepMemory })
@@ -39,6 +45,7 @@ export class SpawnService extends BaseService {
     }
 
     private couldSpawn(body: string[]): boolean {
+        log.debug(`Room: ${this._roomName} | Check if we could spawn new creep...`, body);
         let cost = 0;
         body.forEach(bodyPart => {
             switch (bodyPart) {
@@ -70,6 +77,8 @@ export class SpawnService extends BaseService {
         });
 
         if (this._room) {
+            // TODO: Check if we could spawn in another near room
+            log.debug(`Room: ${this._roomName} | Cost for new creep: ${cost}; Energy available: ${this._room.energyAvailable}`);
             if (this._room.energyAvailable >= cost) {
                 return true;
             }
@@ -90,7 +99,8 @@ export class SpawnService extends BaseService {
         if (rooms.length > 0) {
             return rooms[0];
         }
-        // TODO: Throw error -> there have to be an room
+
+        log.error(`Room: ${this._roomName} | Failed to load room.`);
         return undefined;
     }
 

@@ -1,7 +1,8 @@
 import { BaseService } from './service/BaseService';
-import { HarvesterCreepService } from "./service/HarvesterCreepService";
-import { SpawnService } from "./service/SpawnService";
-import { SERVICE_TYPE } from "./ServiceType.enum";
+import { HarvesterCreepService } from './service/HarvesterCreepService';
+import { SpawnService } from './service/SpawnService';
+import { SERVICE_TYPE } from './ServiceType.enum';
+import { log } from './utils/logger/Log';
 
 
 export class BaseRoom {
@@ -29,6 +30,7 @@ export class BaseRoom {
     }
 
     public addService(serviceName: SERVICE_TYPE): void {
+        log.debug(`Adding service ${serviceName} to room ${this._room.name}...`);
         if (!this._room.memory._services || !this._room.memory._services.includes(serviceName)) {
             const service = this.initService(serviceName);
             if (service) {
@@ -38,12 +40,14 @@ export class BaseRoom {
     }
 
     private analyse(): void {
-
+        log.debug('Analyse room...');
     }
 
     private loadServices(): BaseService[] {
+        log.debug('Loading services from memory...');
         const services: BaseService[] = [];
         const serviceNames = this._room.memory._services as SERVICE_TYPE[] || [];
+        log.debug(`Memory Services: ${serviceNames.length}`);
         serviceNames.forEach(serviceName => {
             const service = this.initService(serviceName);
             if (service) {
@@ -51,13 +55,14 @@ export class BaseRoom {
             }
         });
 
+        log.debug(`Services initialised: ${services.length}`);
         return services;
     }
 
     private saveServices(): void {
+        log.debug('Saving services to memory...');
         const serviceNames: SERVICE_TYPE[] = [];
         this._services.forEach(service => {
-            // TODO: Use FactoryPattern to create services
             switch (typeof service) {
                 case (typeof HarvesterCreepService):
                     serviceNames.push(SERVICE_TYPE.HARVESTERCREEP);
@@ -68,9 +73,12 @@ export class BaseRoom {
             }
         });
         this._room.memory._services = serviceNames;
+        log.debug(`Saved ${serviceNames.length} to memory`);
     }
 
     private initService(serviceName: SERVICE_TYPE): BaseService | undefined {
+        // TODO: Use FactoryPattern to create services
+        log.debug(`Init service ${serviceName}...`);
         switch (serviceName) {
             case SERVICE_TYPE.HARVESTERCREEP:
                 return new HarvesterCreepService(this._room.name);
