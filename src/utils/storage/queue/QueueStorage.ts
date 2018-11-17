@@ -1,5 +1,6 @@
 import Dictionary from "typescript-collections/dist/lib/Dictionary";
 import PriorityQueue from "typescript-collections/dist/lib/PriorityQueue";
+import { log } from "../../logger/Log";
 import { Action } from "./Action";
 import { QUEUETYPE } from "./QueueType.enum";
 
@@ -47,6 +48,7 @@ export class QueueStorage {
     }
 
     public enqueue(roomid: string, queueid: QUEUETYPE, value: Action): boolean {
+        log.debug(`Trying to enqueue ${value.type} to queue ${queueid} in room ${roomid}...`);
         if (!this._storage.containsKey(roomid)) {
             this._storage.setValue(roomid, new Dictionary<number, PriorityQueue<Action>>());
         }
@@ -55,7 +57,11 @@ export class QueueStorage {
             this._storage.getValue(roomid)!.setValue(queueid, new PriorityQueue<Action>());
         }
 
-        return this._storage.getValue(roomid)!.getValue(queueid)!.enqueue(value);
+        const returnValue = this._storage.getValue(roomid)!.getValue(queueid)!.enqueue(value);
+        if (!returnValue) {
+            log.error('Failed to enqueue new action.');
+        }
+        return returnValue
     }
 
     public peek(roomid: string, queueid: QUEUETYPE): Action | undefined {
@@ -63,6 +69,7 @@ export class QueueStorage {
     }
 
     public dequeue(roomid: string, queueid: QUEUETYPE, peek?: boolean): Action | undefined {
+        log.debug(`Trying to dequeue/peek action from queue ${queueid} in room ${roomid}...`);
         if (this._storage.containsKey(roomid)) {
             if (this._storage.getValue(roomid)!.containsKey(queueid)) {
                 if (peek) {
