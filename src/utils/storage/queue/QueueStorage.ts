@@ -1,6 +1,5 @@
 import Dictionary from "typescript-collections/dist/lib/Dictionary";
 import PriorityQueue from "typescript-collections/dist/lib/PriorityQueue";
-
 import { Action } from "./Action";
 import { QUEUETYPE } from "./QueueType.enum";
 
