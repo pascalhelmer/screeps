@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 import clear from "rollup-plugin-clear";
 import resolve from "rollup-plugin-node-resolve";
@@ -38,7 +38,8 @@ export default {
     replace({
        exclude: "node_modules/**",
        __REVISION__: JSON.stringify(git.short()),
-       __REPOSITORY__: JSON.stringify("https://github.com/pascalhelmer/screeps")
+       __REPOSITORY__: JSON.stringify("https://github.com/pascalhelmer/screeps"),
+       __PROFILER_ENABLED__: JSON.stringify(true)
     }),
     typescript({tsconfig: "./tsconfig.json"}),
     (dest !== 'local' && screeps({config: cfg, dryRun: cfg == null}))

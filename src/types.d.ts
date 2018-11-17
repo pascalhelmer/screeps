@@ -19,5 +19,6 @@ interface Memory {
 declare namespace NodeJS {
     interface Global {
         log: any;
+        Profiler: any;
     }
 }

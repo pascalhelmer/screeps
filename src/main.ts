@@ -1,18 +1,27 @@
 import { BaseRoom } from './BaseRoom';
-import { SERVICE_TYPE } from "./ServiceType.enum";
+import { SERVICE_TYPE } from './ServiceType.enum';
 import { ErrorMapper } from './utils/ErrorMapper';
+import * as Profiler from './utils/Profiler';
+import { profileRecord } from './utils/Profiler/Profiler';
 import { log } from './utils/logger/Log';
+
+global.Profiler = Profiler.init();
 
 
 function mainLoop() {
+    console.log(`Current game tick is ${Game.time}`);
+
     // Automatically delete memory of missing creeps
     log.debug('Deleting memory of missing creeps...');
+    profileRecord('clearMemory', true);
+  
     for (const name in Memory.creeps) {
         if (!(name in Game.creeps)) {
             log.info(`Deleting memory of creep ${name}`);
             delete Memory.creeps[name];
         }
     }
+    profileRecord('clearMemory', false);
 
     // Handle rooms
     log.debug('Handling rooms...');
@@ -27,6 +36,4 @@ function mainLoop() {
     }
 }
 
-export const loop = ErrorMapper.wrapLoop(() => {
-    mainLoop();
-});
+export const loop = ErrorMapper.wrapLoop(mainLoop);
