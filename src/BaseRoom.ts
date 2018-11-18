@@ -3,16 +3,18 @@ import { HarvesterCreepService } from './service/HarvesterCreepService';
 import { SpawnService } from './service/SpawnService';
 import { SERVICE_TYPE } from './ServiceType.enum';
 import { log } from './utils/logger/Log';
-
+import { RoomAnalyzer } from './utils/RoomAnalyzer';
 
 export class BaseRoom {
 
     private _room: Room;
     private _services: BaseService[];
+    private _analyzer: RoomAnalyzer;
 
     constructor(room: Room) {
         this._room = room;
         this._services = [];
+        this._analyzer = new RoomAnalyzer(room);
     }
 
     public load(): void {
@@ -41,6 +43,7 @@ export class BaseRoom {
 
     private analyse(): void {
         log.debug('Analyse room...');
+        this._analyzer.findSources();
     }
 
     private loadServices(): BaseService[] {
