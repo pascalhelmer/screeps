@@ -5,6 +5,7 @@ import resolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
 import replace from "rollup-plugin-replace";
 import typescript from "rollup-plugin-typescript2";
+import uglify from "rollup-plugin-uglify";
 import screeps from "rollup-plugin-screeps";
 
 const git = require("git-rev-sync");
@@ -42,6 +43,7 @@ export default {
        __PROFILER_ENABLED__: JSON.stringify(true)
     }),
     typescript({tsconfig: "./tsconfig.json"}),
+    (des === 'main' && uglify()),
     (dest !== 'local' && screeps({config: cfg, dryRun: cfg == null}))
   ]
 }
