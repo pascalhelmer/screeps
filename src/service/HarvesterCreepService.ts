@@ -10,7 +10,7 @@ export class HarvesterCreepService extends CreepService {
 
     public update(): void {
         if (this._creeps.length === 0) {
-            log.debug(`Room: ${this._roomName} | Birth new harvester creep...`);
+            log.debug(`Room: ${this._room.name} | Birth new harvester creep...`);
             this.birth();
         }
 
@@ -19,7 +19,7 @@ export class HarvesterCreepService extends CreepService {
 
     protected birth(): void {
         // TODO: Calculate body
-        log.debug(`Room: ${this._roomName} | Calculating new body for harvester...`);
+        log.debug(`Room: ${this._room.name} | Calculating new body for harvester...`);
         super.birth([WORK, CARRY, MOVE], {} as Memory);
     }
 }

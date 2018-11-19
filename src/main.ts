@@ -14,7 +14,7 @@ function mainLoop() {
     // Automatically delete memory of missing creeps
     log.debug('Deleting memory of missing creeps...');
     profileRecord('clearMemory', true);
-  
+
     for (const name in Memory.creeps) {
         if (!(name in Game.creeps)) {
             log.info(`Deleting memory of creep ${name}`);
@@ -31,6 +31,7 @@ function mainLoop() {
         baseRoom.load();
         baseRoom.addService(SERVICE_TYPE.HARVESTERCREEP);
         baseRoom.addService(SERVICE_TYPE.SPAWN);
+        baseRoom.addService(SERVICE_TYPE.CONSTRUCTION);
         baseRoom.update();
         baseRoom.save();
     }

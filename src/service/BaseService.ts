@@ -1,9 +1,9 @@
 export abstract class BaseService {
 
-    protected _roomName: string;
+    protected _room: Room;
 
     constructor(roomName: string) {
-        this._roomName = roomName;
+        this._room = Game.rooms[roomName];
     }
 
     public abstract update(): void;

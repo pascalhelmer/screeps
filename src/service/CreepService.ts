@@ -18,26 +18,26 @@ export abstract class CreepService extends BaseService {
 
         log.debug(`Init CreepService for ${roomName}...`);
         this._creeps = this.load();
-        log.debug(`Room: ${this._roomName} | Creeps: ${this._creeps.length}`);
+        log.debug(`Room: ${this._room.name} | Creeps: ${this._creeps.length}`);
     }
 
     private load(): BaseCreep[] {
-        log.debug(`Room: ${this._roomName} | Loading creeps with role: ${this._getMemoryKey()}`);
+        log.debug(`Room: ${this._room.name} | Loading creeps with role: ${this._getMemoryKey()}`);
         return _.filter(Game.creeps, { memory: { role: this._getMemoryKey() }}).map(value => new BaseCreep(value));
     }
 
     public update(): void {
-        log.debug(`Room: ${this._roomName} | Updating CreepService...`);
+        log.debug(`Room: ${this._room.name} | Updating CreepService...`);
         this._creeps.forEach(creep => creep.update());
     }
 
     protected birth(body: string[], memory: Memory): void {
-        log.debug(`Room: ${this._roomName} | Queueing birth of new creep.`, body);
+        log.debug(`Room: ${this._room.name} | Queueing birth of new creep.`, body);
         const action = new Action(ACTIONPRIO.HIGHEST, ACTIONTYPE.CREEPNEW, new CreepNewPayload(body, this._getMemoryKey(), memory));
-        QueueStorage.instance().enqueue(this._roomName, QUEUETYPE.CREEP, action);
+        QueueStorage.instance().enqueue(this._room.name, QUEUETYPE.CREEP, action);
     }
 
     private _getMemoryKey(): string {
-        return this._roomName + this.constructor.name;
+        return this._room.name + this.constructor.name;
     }
 }
