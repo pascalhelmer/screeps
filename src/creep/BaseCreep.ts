@@ -15,16 +15,6 @@ export class BaseCreep {
         this._state = CREEP_STATE.WORK;
     }
 
-    public load(): void {
-        this._state = this._creep.memory._state;
-        this._pause = Object.assign(new RoomPosition(0, 0, ''), this._creep.memory._pause);
-    }
-
-    public save(): void {
-        this._creep.memory._state = this._state;
-        this._creep.memory._pause = this._pause;
-    }
-
     public update(): void {
         switch (this._state) {
             case CREEP_STATE.WORK:
