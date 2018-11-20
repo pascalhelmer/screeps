@@ -1,3 +1,4 @@
+import { BaseSpawn } from "../BaseSpawn";
 import { log } from "../utils/logger/Log";
 import { CreepNewPayload } from "../utils/payload/CreepNewPayload";
 import { ACTIONTYPE } from "../utils/storage/queue/ActionType.enum";
@@ -8,7 +9,7 @@ import { BaseService } from "./BaseService";
 
 export class SpawnService extends BaseService {
 
-    private _spawns: StructureSpawn[];
+    private _spawns: BaseSpawn[];
 
     constructor(roomName: string) {
         super(roomName);
@@ -35,7 +36,11 @@ export class SpawnService extends BaseService {
                         log.debug(`Room: ${this._room.name} | Spawn new creep in free spawn: ${freeSpawn.name}`);
                         QueueStorage.instance().dequeue(this._room.name, QUEUETYPE.CREEP);
                         // TODO: Add name generator
-                        freeSpawn.spawnCreep(payload.body as BodyPartConstant[], `${Game.time}`, { memory: payload.memory as CreepMemory })
+                        freeSpawn.spawnCreep(
+                            payload.body as BodyPartConstant[],
+                            `${Game.time}`,
+                            { memory: payload.memory as CreepMemory }
+                        );
                     }
                 }
                 break;
@@ -84,17 +89,18 @@ export class SpawnService extends BaseService {
         return false;
     }
 
-    private getNotWorkingSpawn(): StructureSpawn | undefined {
-        const freeSpawns: StructureSpawn[] = _.filter(this._spawns, { spawning: null });
+    private getNotWorkingSpawn(): BaseSpawn | undefined {
+        // TODO: Replace filter by another function
+        const freeSpawns: BaseSpawn[] = _.filter(this._spawns, { spawning: null });
         if (freeSpawns.length > 0) {
             return freeSpawns[0];
         }
         return undefined;
     }
 
-    private loadSpawns(): StructureSpawn[] {
+    private loadSpawns(): BaseSpawn[] {
         if (this._room) {
-            return this._room.find(FIND_MY_SPAWNS);
+            return this._room.find(FIND_MY_SPAWNS).map(spawn => new BaseSpawn(spawn));
         }
         return [];
     }

@@ -37,7 +37,7 @@ export abstract class CreepService extends BaseService {
         return QueueStorage.instance().enqueue(this._room.name, QUEUETYPE.CREEP, action);
     }
 
-    private _getMemoryKey(): string {
+    protected _getMemoryKey(): string {
         return this._room.name + this.constructor.name;
     }
 }
