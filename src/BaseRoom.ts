@@ -3,7 +3,7 @@ import { HarvesterCreepService } from './service/HarvesterCreepService';
 import { SpawnService } from './service/SpawnService';
 import { SERVICE_TYPE } from './ServiceType.enum';
 import { log } from './utils/logger/Log';
-import { RoomAnalyzer } from './utils/RoomAnalyzer';
+import { RoomAnalyzer } from './utils/analyzer/RoomAnalyzer';
 
 export class BaseRoom {
 
