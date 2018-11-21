@@ -26,7 +26,7 @@ export class RoomAnalyzer {
                     source.pos.y+1,
                     source.pos.x+1,
                     true
-                ).reduce((res, src) => res + (src.terrain === 'plain' ? 1 : 0), 0),
+                ).reduce((res, src) => res + (src.terrain === 'plain' || src.terrain === 'swamp' ? 1 : 0), 0),
                 id: source.id
             });
         }
