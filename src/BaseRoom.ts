@@ -1,9 +1,11 @@
 import { BaseService } from './service/BaseService';
 import { HarvesterCreepService } from './service/HarvesterCreepService';
 import { SpawnService } from './service/SpawnService';
+import { UpgraderCreepService } from "./service/UpgraderCreepService";
 import { SERVICE_TYPE } from './ServiceType.enum';
 import { log } from './utils/logger/Log';
 import { RoomAnalyzer } from './utils/analyzer/RoomAnalyzer';
+
 
 export class BaseRoom {
 
@@ -70,6 +72,9 @@ export class BaseRoom {
                 case (typeof HarvesterCreepService):
                     serviceNames.push(SERVICE_TYPE.HARVESTERCREEP);
                     break;
+                case (typeof UpgraderCreepService):
+                    serviceNames.push(SERVICE_TYPE.UPGRADERCREEP);
+                    break;
                 case (typeof SpawnService):
                     serviceNames.push(SERVICE_TYPE.SPAWN);
                     break;
@@ -85,6 +90,8 @@ export class BaseRoom {
         switch (serviceName) {
             case SERVICE_TYPE.HARVESTERCREEP:
                 return new HarvesterCreepService(this._room.name);
+            case SERVICE_TYPE.UPGRADERCREEP:
+                return new UpgraderCreepService(this._room.name);
             case SERVICE_TYPE.SPAWN:
                 return new SpawnService(this._room.name);
         }
