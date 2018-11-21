@@ -31,6 +31,7 @@ function mainLoop() {
         const baseRoom: BaseRoom = new BaseRoom(Game.rooms[room]);
         baseRoom.load();
         baseRoom.addService(SERVICE_TYPE.HARVESTERCREEP);
+        baseRoom.addService(SERVICE_TYPE.UPGRADERCREEP);
         baseRoom.addService(SERVICE_TYPE.SPAWN);
         baseRoom.update();
         baseRoom.save();
