@@ -1,3 +1,4 @@
 export enum ACTIONTYPE {
-    CREEPNEW
+    CREEPNEW,
+    ROADNEW
 }

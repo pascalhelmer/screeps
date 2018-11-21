@@ -33,6 +33,7 @@ function mainLoop() {
         baseRoom.addService(SERVICE_TYPE.HARVESTERCREEP);
         baseRoom.addService(SERVICE_TYPE.UPGRADERCREEP);
         baseRoom.addService(SERVICE_TYPE.SPAWN);
+        baseRoom.addService(SERVICE_TYPE.CONSTRUCTION);
         baseRoom.update();
         baseRoom.save();
     }
