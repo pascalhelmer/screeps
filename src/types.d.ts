@@ -9,6 +9,10 @@ interface RoomMemory {
     [name: string]: any;
 }
 
+interface SpawnMemory {
+    [name: string]: any;
+}
+
 interface Memory {
     uuid: number;
     log: any;

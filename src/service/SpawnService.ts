@@ -1,3 +1,4 @@
+import { BaseSpawn } from "../BaseSpawn";
 import { log } from "../utils/logger/Log";
 import { CreepNewPayload } from "../utils/payload/CreepNewPayload";
 import { ACTIONTYPE } from "../utils/storage/queue/ActionType.enum";
@@ -8,36 +9,38 @@ import { BaseService } from "./BaseService";
 
 export class SpawnService extends BaseService {
 
-    private _room: Room | undefined;
-    private _spawns: StructureSpawn[];
+    private _spawns: BaseSpawn[];
 
     constructor(roomName: string) {
         super(roomName);
 
         log.debug(`Init SpawnService for room ${roomName}...`);
-        this._room = this.loadRoom();
         this._spawns = this.loadSpawns();
-        log.debug(`Room: ${this._roomName} | Spawns: ${this._spawns.length}`);
+        log.debug(`Room: ${this._room.name} | Spawns: ${this._spawns.length}`);
     }
 
     public update(): void {
-        log.debug(`Room: ${this._roomName} | Updating SpawnService...`);
-        const action = QueueStorage.instance().peek(this._roomName, QUEUETYPE.CREEP);
+        log.debug(`Room: ${this._room.name} | Updating SpawnService...`);
+        const action = QueueStorage.instance().peek(this._room.name, QUEUETYPE.CREEP);
         if (!action) {
             return;
         }
 
         switch (action.type) {
             case ACTIONTYPE.CREEPNEW:
-                log.debug(`Room: ${this._roomName} | New creeep spawn action found.`);
+                log.debug(`Room: ${this._room.name} | New creep spawn action found.`);
                 const freeSpawn = this.getNotWorkingSpawn();
                 if (freeSpawn) {
                     const payload = (action.payload as CreepNewPayload);
                     if (this.couldSpawn(payload.body)) {
-                        log.debug(`Room: ${this._roomName} | Spawn new creep in free spawn: ${freeSpawn.name}`);
-                        QueueStorage.instance().dequeue(this._roomName, QUEUETYPE.CREEP);
+                        log.debug(`Room: ${this._room.name} | Spawn new creep in free spawn: ${freeSpawn.name}`);
+                        QueueStorage.instance().dequeue(this._room.name, QUEUETYPE.CREEP);
                         // TODO: Add name generator
-                        freeSpawn.spawnCreep(payload.body as BodyPartConstant[], `${Game.time}`, { memory: payload.memory as CreepMemory })
+                        freeSpawn.spawnCreep(
+                            payload.body as BodyPartConstant[],
+                            `${Game.time}`,
+                            { memory: payload.memory as CreepMemory }
+                        );
                     }
                 }
                 break;
@@ -45,7 +48,7 @@ export class SpawnService extends BaseService {
     }
 
     private couldSpawn(body: string[]): boolean {
-        log.debug(`Room: ${this._roomName} | Check if we could spawn new creep...`, body);
+        log.debug(`Room: ${this._room.name} | Check if we could spawn new creep...`, body);
         let cost = 0;
         body.forEach(bodyPart => {
             switch (bodyPart) {
@@ -78,7 +81,7 @@ export class SpawnService extends BaseService {
 
         if (this._room) {
             // TODO: Check if we could spawn in another near room
-            log.debug(`Room: ${this._roomName} | Cost for new creep: ${cost}; Energy available: ${this._room.energyAvailable}`);
+            log.debug(`Room: ${this._room.name} | Cost for new creep: ${cost}; Energy available: ${this._room.energyAvailable}`);
             if (this._room.energyAvailable >= cost) {
                 return true;
             }
@@ -86,27 +89,18 @@ export class SpawnService extends BaseService {
         return false;
     }
 
-    private getNotWorkingSpawn(): StructureSpawn | undefined {
-        const freeSpawns: StructureSpawn[] = _.filter(this._spawns, { spawning: null });
+    private getNotWorkingSpawn(): BaseSpawn | undefined {
+        // TODO: Replace filter by another function
+        const freeSpawns: BaseSpawn[] = _.filter(this._spawns, { spawning: null });
         if (freeSpawns.length > 0) {
             return freeSpawns[0];
         }
         return undefined;
     }
 
-    private loadRoom(): Room | undefined {
-        const rooms: Room[] = _.filter(Game.rooms, { name: this._roomName });
-        if (rooms.length > 0) {
-            return rooms[0];
-        }
-
-        log.error(`Room: ${this._roomName} | Failed to load room.`);
-        return undefined;
-    }
-
-    private loadSpawns(): StructureSpawn[] {
+    private loadSpawns(): BaseSpawn[] {
         if (this._room) {
-            return this._room.find(FIND_MY_SPAWNS);
+            return this._room.find(FIND_MY_SPAWNS).map(spawn => new BaseSpawn(spawn));
         }
         return [];
     }

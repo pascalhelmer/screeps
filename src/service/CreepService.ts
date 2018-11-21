@@ -16,28 +16,28 @@ export abstract class CreepService extends BaseService {
     constructor(roomName: string) {
         super(roomName);
 
-        log.debug(`Init CreepService for ${roomName}...`);
-        this._creeps = this.load();
-        log.debug(`Room: ${this._roomName} | Creeps: ${this._creeps.length}`);
+        log.debug(`Loading CreepService creeps for ${this._room.name}...`);
+        this._creeps = this.loadCreeps().map(value => new BaseCreep(value));
+        log.debug(`Room: ${this._room.name} | Creeps: ${this._creeps.length}`);
     }
 
-    private load(): BaseCreep[] {
-        log.debug(`Room: ${this._roomName} | Loading creeps with role: ${this._getMemoryKey()}`);
-        return _.filter(Game.creeps, { memory: { role: this._getMemoryKey() }}).map(value => new BaseCreep(value));
+    protected loadCreeps(): Creep[] {
+        log.debug(`Room: ${this._room.name} | Loading creeps with role: ${this._getMemoryKey()}`);
+        return _.filter(Game.creeps, { memory: { role: this._getMemoryKey() }});
     }
 
     public update(): void {
-        log.debug(`Room: ${this._roomName} | Updating CreepService...`);
+        log.debug(`Room: ${this._room.name} | Updating CreepService...`);
         this._creeps.forEach(creep => creep.update());
     }
 
-    protected birth(body: string[], memory: Memory): void {
-        log.debug(`Room: ${this._roomName} | Queueing birth of new creep.`, body);
+    protected birth(body: string[], memory: any): boolean {
+        log.debug(`Room: ${this._room.name} | Queueing birth of new creep.`, body);
         const action = new Action(ACTIONPRIO.HIGHEST, ACTIONTYPE.CREEPNEW, new CreepNewPayload(body, this._getMemoryKey(), memory));
-        QueueStorage.instance().enqueue(this._roomName, QUEUETYPE.CREEP, action);
+        return QueueStorage.instance().enqueue(this._room.name, QUEUETYPE.CREEP, action);
     }
 
-    private _getMemoryKey(): string {
-        return this._roomName + this.constructor.name;
+    protected _getMemoryKey(): string {
+        return this._room.name + this.constructor.name;
     }
 }

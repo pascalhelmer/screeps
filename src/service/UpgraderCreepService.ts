@@ -1,36 +1,35 @@
-import { BaseCreep } from "../creep/BaseCreep";
-import { HarvesterCreep } from "../creep/HarvesterCreep";
-import { DockableSource } from "../utils/analyzer/DockableSource.interface";
+import { UpgraderCreep } from '../creep/UpgraderCreep';
+import { DockableSource } from '../utils/analyzer/DockableSource.interface';
 import { RoomAnalyzer } from '../utils/analyzer/RoomAnalyzer';
 import { log } from '../utils/logger/Log';
 import { EventStorage } from "../utils/storage/event/EventStorage";
-import { EVENTTYPE } from "../utils/storage/event/EventType.enum";
+import { EVENTTYPE } from '../utils/storage/event/EventType.enum';
 import { CreepService } from './CreepService';
 
 
-export interface HarvesterMemory {
+export interface UpgraderMemory {
     [name: string]: any;
 }
 
-export class HarvesterCreepService extends CreepService {
+export class UpgraderCreepService extends CreepService {
 
-    private _memory: HarvesterMemory;
+    private _memory: UpgraderMemory;
     private _roomAnalyzer: RoomAnalyzer;
 
     constructor(roomName: string) {
         super(roomName);
 
         // TODO: Handle loading of creeps better; Currently they got loaded two times. First time in CreepService.
-        log.debug(`Loading HarvesterCreepService creeps for ${this._room.name}...`);
-        this._creeps = this.loadCreeps().map(value => new HarvesterCreep(value));
+        log.debug(`Loading UpgraderCreepService creeps for ${this._room.name}...`);
+        this._creeps = this.loadCreeps().map(value => new UpgraderCreep(value));
         log.debug(`Room: ${this._room.name} | Creeps: ${this._creeps.length}`);
 
         this._roomAnalyzer = new RoomAnalyzer(this._room);
 
-        if (!this._room.memory.harvester) {
-            this._room.memory.harvester = {};
+        if (!this._room.memory.upgrader) {
+            this._room.memory.upgrader = {};
         }
-        this._memory = this._room.memory.harvester;
+        this._memory = this._room.memory.upgrader;
     }
 
     public update(): void {
@@ -56,19 +55,20 @@ export class HarvesterCreepService extends CreepService {
             this._memory.currentBirthing = false;
         }
 
-        // Calculate if we need a new harvester
+        // Calculate if we need a new upgrader
         let shouldBirth = false;
         let source;
         const dockableSources: DockableSource[] = this._roomAnalyzer.findSources();
         dockableSources.some((value: DockableSource) => {
             log.debug('Source ID: ', value.id);
-            const currentAssignedHarvester: number = _.filter(
+            const currentAssignedUpgrader: number = _.filter(
                 Game.creeps,
                 { memory: { role: this._getMemoryKey(), mine: value.id }}
             ).length;
-            log.debug('curAssignedHarvester: ', currentAssignedHarvester);
+            log.debug('curAssignedUpgrader: ', currentAssignedUpgrader);
             log.debug('dockable: ', value.dockable);
-            if (currentAssignedHarvester < value.dockable) {
+            // TODO: Calculate Upgrader number based on Controller level? Count of Harvester?
+            if (currentAssignedUpgrader < 2) {
                 shouldBirth = true;
                 source = value.id;
                 return true;
@@ -78,13 +78,12 @@ export class HarvesterCreepService extends CreepService {
 
         // Birth new harvester
         if (shouldBirth) {
-            log.debug(`Room: ${this._room.name} | Birth new harvester creep...`);
+            log.debug(`Room: ${this._room.name} | Birth new upgrader creep...`);
             // TODO: Calculate body
-            log.debug(`Room: ${this._room.name} | Calculating new body for harvester...`);
-            // TODO: Get storage depot as destination for this new harvester
+            log.debug(`Room: ${this._room.name} | Calculating new body for upgrader...`);
             const birthing: boolean = super.birth(
                 [WORK, CARRY, MOVE, MOVE],
-                { mine: source, depot: this._room.find(FIND_MY_SPAWNS)[0].id }
+                { mine: source }
             );
             this._memory.currentBirthing = birthing;
             return birthing;

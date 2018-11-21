@@ -1,3 +1,5 @@
+import { DockableSource } from './DockableSource.interface';
+
 
 export class RoomAnalyzer {
 
@@ -7,9 +9,9 @@ export class RoomAnalyzer {
         this._room = room;
     }
 
-    public findSources() {
+    public findSources(): DockableSource[] {
         const sources = this._room.find(FIND_SOURCES);
-        const result = [];
+        const result: DockableSource[] = [];
 
         if (this._room.memory.sources !== undefined) {
             return this._room.memory.sources;
@@ -25,7 +27,7 @@ export class RoomAnalyzer {
                     source.pos.x+1,
                     true
                 ).reduce((res, src) => res + (src.terrain === 'plain' || src.terrain === 'swamp' ? 1 : 0), 0),
-                id: source.id,
+                id: source.id
             });
         }
 
