@@ -43,7 +43,7 @@ export default {
        __PROFILER_ENABLED__: JSON.stringify(true)
     }),
     typescript({tsconfig: "./tsconfig.json"}),
-    (des === 'main' && uglify()),
+    (dest === 'main' && uglify()),
     (dest !== 'local' && screeps({config: cfg, dryRun: cfg == null}))
   ]
 }
