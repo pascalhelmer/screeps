@@ -1,10 +1,17 @@
 import { BaseService } from './service/BaseService';
+import { ConstructionCreepService } from "./service/ConstructionCreepService";
 import { HarvesterCreepService } from './service/HarvesterCreepService';
 import { SpawnService } from './service/SpawnService';
 import { UpgraderCreepService } from "./service/UpgraderCreepService";
 import { SERVICE_TYPE } from './ServiceType.enum';
 import { log } from './utils/logger/Log';
 import { RoomAnalyzer } from './utils/analyzer/RoomAnalyzer';
+import { RoadNewPayload } from "./utils/payload/RoadNewPayload";
+import { Action } from "./utils/storage/queue/Action";
+import { ACTIONPRIO } from "./utils/storage/queue/ActionPrio.enum";
+import { ACTIONTYPE } from "./utils/storage/queue/ActionType.enum";
+import { QueueStorage } from "./utils/storage/queue/QueueStorage";
+import { QUEUETYPE } from "./utils/storage/queue/QueueType.enum";
 
 
 export class BaseRoom {
@@ -29,6 +36,12 @@ export class BaseRoom {
 
     public update(): void {
         this.analyse();
+
+        if (!this._room.memory.testConstruction) {
+            const action: Action = new Action(ACTIONPRIO.HIGHEST, ACTIONTYPE.ROADNEW, new RoadNewPayload('bede85c68529611', 'f5680774d1c1fe8'));
+            QueueStorage.instance().enqueue(this._room.name, QUEUETYPE.CONSTRUCTION, action);
+            this._room.memory.testConstruction = true;
+        }
 
         this._services.forEach(service => service.update());
     }
@@ -78,6 +91,9 @@ export class BaseRoom {
                 case (typeof SpawnService):
                     serviceNames.push(SERVICE_TYPE.SPAWN);
                     break;
+                case (typeof ConstructionCreepService):
+                    serviceNames.push(SERVICE_TYPE.CONSTRUCTIONCREEP);
+                    break;
             }
         });
         this._room.memory._services = serviceNames;
@@ -94,6 +110,8 @@ export class BaseRoom {
                 return new UpgraderCreepService(this._room.name);
             case SERVICE_TYPE.SPAWN:
                 return new SpawnService(this._room.name);
+            case SERVICE_TYPE.CONSTRUCTIONCREEP:
+                return new ConstructionCreepService(this._room.name);
         }
         return undefined;
     }
